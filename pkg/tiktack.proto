@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "github.com/Liar233/cronos-shovel/pkg";
+
+package tiktak;
+
+service TikTack{
+  rpc TikTack(TikRequest) returns (TackResponse) {}
+}
+
+message TikRequest {
+  string input = 1;
+}
+
+message TackResponse {
+  string output = 1;
+}

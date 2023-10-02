@@ -1,0 +1,17 @@
+version: "3.8"
+
+networks:
+  cronos-shovel-network:
+  global-network:
+    external: true
+
+services:
+  cronos-shovel-server:
+    image: cronos-shovel-server
+    container_name: cronos-shovel-server
+    build:
+      context: ../
+      dockerfile: ./build/go/Dockerfile
+    networks:
+      - cronos-shovel-network
+      - global-network
