@@ -6,9 +6,9 @@ networks:
     external: true
 
 services:
-  chronos-shovel-server-dev:
-    image: chronos-shovel-server-dev
-    container_name: chronos-shovel-server-dev
+  cronos-shovel-server-dev:
+    image: cronos-shovel-server-dev
+    container_name: cronos-shovel-server-dev
     build:
       context: ../
       dockerfile: ./build/go/Dockerfile.dev

@@ -15,6 +15,6 @@ run:
 stop:
 	docker-compose -f ./build/docker-compose.yml down $(c)
 test:
-	docker-compose -f ./build/docker-compose.yml exec chronos-shovel-server go test -race ./... $(c)
+	docker-compose -f ./build/docker-compose.yml exec cronos-shovel-server go test -race ./... $(c)
 lint:
 	docker run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:v1.54.2 golangci-lint run -v $(c)

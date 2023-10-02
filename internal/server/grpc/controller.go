@@ -19,9 +19,11 @@ func NewTikTackController(logger logrus.FieldLogger) TikTackController {
 
 func (ttc TikTackController) TikTack(ctx context.Context, req *pb.TikRequest) (*pb.TackResponse, error) {
 
-	ttc.logger.Info("Request input: %s\n", req.GetInput())
-
-	return &pb.TackResponse{Output: "Tok"}, nil
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+		ttc.logger.Info("Request input: %s\n", req.GetInput())
+		return &pb.TackResponse{Output: "Tok"}, nil
+	}
 }
-
-func (ttc TikTackController) mustEmbedUnimplementedTikTackServer() {}
