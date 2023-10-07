@@ -2,7 +2,7 @@ grpc:
   host: 0.0.0.0
   port: 8080
 storage:
-  host: cronos-shovel-postgresql
+  host: cronos-shovel-postgresql-dev
   port: 5432
   database: cronos_db
   user: cronos

@@ -6,13 +6,23 @@ import (
 	"syscall"
 
 	"github.com/Liar233/cronos-shovel/internal/server/grpc"
+	"github.com/Liar233/cronos-shovel/internal/server/storage"
+	"github.com/Liar233/cronos-shovel/internal/server/storage/repository"
 	"github.com/sirupsen/logrus"
 )
+
+type CronosServerConfig struct {
+	GRPC    grpc.GRPCConfig               `yaml:"grpc"`
+	Storage storage.PostgresStorageConfig `yaml:"storage"`
+}
 
 type CronoServer struct {
 	config     *CronosServerConfig
 	grpcServer grpc.GracefulServer
 	logger     logrus.FieldLogger
+	msgRepo    repository.MessageRepositoryInterface
+	delayRepo  repository.DelayRepositoryInterface
+	storage    storage.ConnectorInterface
 }
 
 func NewCronoServer(config *CronosServerConfig) *CronoServer {
@@ -56,6 +66,15 @@ func (cs *CronoServer) Run() {
 }
 
 func (cs *CronoServer) BootstrapStorage() error {
+
+	cs.storage = storage.NewPostgresStorage(&cs.config.Storage)
+
+	if err := cs.storage.Connect(); err != nil {
+		return err
+	}
+
+	cs.msgRepo = repository.NewMessagePostgresqlRepository(cs.storage)
+	cs.delayRepo = repository.NewDelayPostgresqlRepository(cs.storage)
 
 	return nil
 }
@@ -106,8 +125,4 @@ func (cs *CronoServer) BootstrapLogger() error {
 	cs.logger = logger
 
 	return nil
-}
-
-type CronosServerConfig struct {
-	GRPC grpc.GRPCConfig `yaml:"grpc"`
 }
