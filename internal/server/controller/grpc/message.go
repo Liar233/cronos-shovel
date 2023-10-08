@@ -11,6 +11,7 @@ import (
 )
 
 type MessageController struct {
+	pb.UnimplementedMessageControllerServer
 	logger  logrus.FieldLogger
 	msgRepo repository.MessageRepositoryInterface
 }
@@ -26,18 +27,31 @@ func NewMessageController(
 	}
 }
 
-func (mc *MessageController) GetMessageList(ctx context.Context, req *pb.GetMessageListRequest) (*pb.GetMessageListResponse, error) {
-
-	_, err := mc.msgRepo.GetList(ctx)
+func (mc *MessageController) GetMessageList(ctx context.Context, _ *pb.GetMessageListRequest) (*pb.GetMessageListResponse, error) {
 
 	resp := &pb.GetMessageListResponse{}
+
+	msgList, err := mc.msgRepo.GetList(ctx)
 
 	if err != nil {
 		resp.Error = err.Error()
 		mc.logger.Error("Get messages list error: %s", err.Error())
-	} else {
 
-		// ToDo: fill resp objects
+		return resp, err
+	}
+
+	for _, msg := range msgList {
+
+		obj := &pb.MessageObject{
+			Id:       msg.ID.String(),
+			Mask:     msg.Mask,
+			Title:    msg.Title,
+			Channels: msg.Channels,
+			Payload:  msg.Payload,
+			Delays:   nil,
+		}
+
+		resp.Messages = append(resp.Messages, obj)
 	}
 
 	return resp, err
@@ -73,8 +87,16 @@ func (mc *MessageController) CreateMessage(ctx context.Context, req *pb.CreateMe
 
 func (mc *MessageController) UpdateMessage(ctx context.Context, req *pb.UpdateMessageRequest) (*pb.UpdateMessageResponse, error) {
 
-	// ToDo: catch uuid.MustParse panic
-	id := uuid.MustParse(req.Id)
+	resp := &pb.UpdateMessageResponse{}
+
+	id, err := uuid.Parse(req.Id)
+
+	if err != nil {
+		resp.Error = err.Error()
+		mc.logger.Error("Invalid message id: %s", err.Error())
+
+		return resp, err
+	}
 
 	msg := &model.Message{
 		ID:       id,
@@ -84,9 +106,7 @@ func (mc *MessageController) UpdateMessage(ctx context.Context, req *pb.UpdateMe
 		Payload:  req.Payload,
 	}
 
-	err := mc.msgRepo.Update(ctx, msg)
-
-	resp := &pb.UpdateMessageResponse{}
+	err = mc.msgRepo.Update(ctx, msg)
 
 	if err != nil {
 		resp.Error = err.Error()
@@ -106,12 +126,18 @@ func (mc *MessageController) UpdateMessage(ctx context.Context, req *pb.UpdateMe
 
 func (mc *MessageController) DeleteMessage(ctx context.Context, req *pb.DeleteMessageRequest) (*pb.DeleteMessageResponse, error) {
 
-	// ToDo: catch uuid.MustParse panic
-	id := uuid.MustParse(req.Id)
-
 	resp := &pb.DeleteMessageResponse{}
 
-	if err := mc.msgRepo.Delete(ctx, id); err != nil {
+	id, err := uuid.Parse(req.Id)
+
+	if err != nil {
+		resp.Error = err.Error()
+		mc.logger.Error("Invalid message id: %s", err.Error())
+
+		return resp, err
+	}
+
+	if err = mc.msgRepo.Delete(ctx, id); err != nil {
 		resp.Error = err.Error()
 		mc.logger.Error("Delete message error: %s", err.Error())
 
@@ -119,9 +145,4 @@ func (mc *MessageController) DeleteMessage(ctx context.Context, req *pb.DeleteMe
 	}
 
 	return resp, nil
-}
-
-func (mc *MessageController) mustEmbedUnimplementedMessageControllerServer() {
-	//TODO implement me
-	panic("implement me")
 }

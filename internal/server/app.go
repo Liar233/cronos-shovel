@@ -5,20 +5,20 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Liar233/cronos-shovel/internal/server/grpc"
+	grpc2 "github.com/Liar233/cronos-shovel/internal/server/controller/grpc"
 	"github.com/Liar233/cronos-shovel/internal/server/storage"
 	"github.com/Liar233/cronos-shovel/internal/server/storage/repository"
 	"github.com/sirupsen/logrus"
 )
 
 type CronosServerConfig struct {
-	GRPC    grpc.GRPCConfig               `yaml:"grpc"`
+	GRPC    grpc2.GRPCConfig              `yaml:"grpc"`
 	Storage storage.PostgresStorageConfig `yaml:"storage"`
 }
 
 type CronoServer struct {
 	config     *CronosServerConfig
-	grpcServer grpc.GracefulServer
+	grpcServer grpc2.GracefulServer
 	logger     logrus.FieldLogger
 	msgRepo    repository.MessageRepositoryInterface
 	delayRepo  repository.DelayRepositoryInterface
@@ -87,13 +87,11 @@ func (cs *CronoServer) BootstrapChannels() error {
 func (cs *CronoServer) BootstrapGRPCServer() error {
 	var err error
 
-	tikTackController := grpc.NewTikTackController(cs.logger)
-	msgController := grpc.NewMessageController(cs.logger, cs.msgRepo)
-	delayController := grpc.NewDelayController(cs.logger, cs.delayRepo)
+	msgController := grpc2.NewMessageController(cs.logger, cs.msgRepo)
+	delayController := grpc2.NewDelayController(cs.logger, cs.delayRepo)
 
-	cs.grpcServer, err = grpc.NewGRPCServer(
+	cs.grpcServer, err = grpc2.NewGRPCServer(
 		&cs.config.GRPC,
-		tikTackController,
 		msgController,
 		delayController,
 	)

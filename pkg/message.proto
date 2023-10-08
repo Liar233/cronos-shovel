@@ -17,18 +17,19 @@ message DelayObject {
 };
 
 message MessageObject {
-  string mask = 1;
-  string title = 2;
-  repeated string channels = 3;
-  bytes payload = 4;
-  repeated DelayObject delays = 5;
+  string id = 1;
+  string mask = 2;
+  string title = 3;
+  repeated string channels = 4;
+  bytes payload = 5;
+  repeated DelayObject delays = 6;
 }
 
 message GetMessageListRequest {}
 
 message GetMessageListResponse {
   string error = 1;
-  repeated MessageObject objects = 2;
+  repeated MessageObject messages = 2;
 }
 
 message CreateMessageRequest {

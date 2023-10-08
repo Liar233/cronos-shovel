@@ -25,7 +25,6 @@ type GracefulServer interface {
 // Создание gRPC сервера
 func NewGRPCServer(
 	config *GRPCConfig,
-	tikTakController pb.TikTackServer,
 	msgController pb.MessageControllerServer,
 	delayController pb.DelayControllerServer,
 ) (GracefulServer, error) {
@@ -39,7 +38,6 @@ func NewGRPCServer(
 	}
 
 	server := grpc.NewServer()
-	pb.RegisterTikTackServer(server, tikTakController)
 	pb.RegisterMessageControllerServer(server, msgController)
 	pb.RegisterDelayControllerServer(server, delayController)
 
