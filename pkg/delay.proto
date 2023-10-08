@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "github.com/Liar233/cronos-shovel/pkg";
+
+package delay;
+
+service DelayController{
+  rpc CreateDelay(CreateDelayRequest) returns (CreateDelayResponse) {}
+  rpc DeleteDelay(DeleteDelayRequest) returns (DeleteDelayResponse) {}
+}
+
+message CreateDelayRequest{
+  string messageId = 1;
+  int64 dateTime = 2;
+}
+
+message CreateDelayResponse{
+  string error = 1;
+  string id = 2;
+  string messageId = 3;
+  int64 dateTime = 4;
+}
+
+message DeleteDelayRequest{
+  string id = 1;
+}
+
+message DeleteDelayResponse{
+  string error = 1;
+}

@@ -87,9 +87,16 @@ func (cs *CronoServer) BootstrapChannels() error {
 func (cs *CronoServer) BootstrapGRPCServer() error {
 	var err error
 
-	controller := grpc.NewTikTackController(cs.logger)
+	tikTackController := grpc.NewTikTackController(cs.logger)
+	msgController := grpc.NewMessageController(cs.logger, cs.msgRepo)
+	delayController := grpc.NewDelayController(cs.logger, cs.delayRepo)
 
-	cs.grpcServer, err = grpc.NewGRPCServer(&cs.config.GRPC, controller)
+	cs.grpcServer, err = grpc.NewGRPCServer(
+		&cs.config.GRPC,
+		tikTackController,
+		msgController,
+		delayController,
+	)
 
 	return err
 }

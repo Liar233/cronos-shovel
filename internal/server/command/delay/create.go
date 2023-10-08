@@ -23,7 +23,7 @@ func (cdc *CreateDelayCommand) Exec(ctx context.Context, dto *CreateDelayDto) er
 	delay := model.NewDelay(dto.MessageId)
 	delay.DateTime = dto.Datetime
 
-	return cdc.delayRepo.Save(ctx, delay)
+	return cdc.delayRepo.Create(ctx, delay)
 }
 
 func NewCreateDelayCommand(delayRepo repository.DelayRepositoryInterface) *CreateDelayCommand {

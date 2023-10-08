@@ -21,7 +21,7 @@ func NewDelayPostgresqlRepository(provider storage.ConnectorInterface) *DelayPos
 	}
 }
 
-func (dpr *DelayPostgresqlRepository) Save(ctx context.Context, delay *model.Delay) error {
+func (dpr *DelayPostgresqlRepository) Create(ctx context.Context, delay *model.Delay) error {
 	//TODO implement me
 	panic("implement me")
 }

@@ -23,6 +23,6 @@ type MessageRepositoryInterface interface {
 }
 
 type DelayRepositoryInterface interface {
-	Save(ctx context.Context, msg *model.Delay) error
+	Create(ctx context.Context, msg *model.Delay) error
 	Delete(ctx context.Context, id uuid.UUID) error
 }
