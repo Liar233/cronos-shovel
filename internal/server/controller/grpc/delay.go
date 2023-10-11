@@ -52,10 +52,7 @@ func (dc *DelayController) CreateDelay(ctx context.Context, req *pb.CreateDelayR
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	ts := &timestamppb.Timestamp{
-		Seconds: delay.DateTime.Unix(),
-		Nanos:   0,
-	}
+	ts := timestamppb.New(delay.DateTime)
 
 	resp := &pb.CreateDelayResponse{
 		Id:        delay.ID.String(),
