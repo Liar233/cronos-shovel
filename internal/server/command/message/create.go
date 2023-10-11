@@ -18,16 +18,19 @@ type CreateMessageCommand struct {
 	msgRepo repository.MessageRepositoryInterface
 }
 
-func (cmc *CreateMessageCommand) Exec(ctx context.Context, dto *CreateMessageDto) error {
+func (cmc *CreateMessageCommand) Exec(ctx context.Context, dto *CreateMessageDto) (*model.Message, error) {
 
-	msg := &model.Message{
-		Title:    dto.Title,
-		Mask:     dto.Mask,
-		Channels: dto.Channels,
-		Payload:  dto.Payload,
+	msg := model.NewMessage()
+	msg.Title = dto.Title
+	msg.Mask = dto.Mask
+	msg.Channels = dto.Channels
+	msg.Payload = dto.Payload
+
+	if err := cmc.msgRepo.Create(ctx, msg); err != nil {
+		return nil, err
 	}
 
-	return cmc.msgRepo.Create(ctx, msg)
+	return msg, nil
 }
 
 func NewCreateMessageCommand(msgRepo repository.MessageRepositoryInterface) *CreateMessageCommand {

@@ -20,7 +20,7 @@ type UpdateMessageCommand struct {
 	msgRepo repository.MessageRepositoryInterface
 }
 
-func (umc *UpdateMessageCommand) Exec(ctx context.Context, dto *UpdateMessageDto) error {
+func (umc *UpdateMessageCommand) Exec(ctx context.Context, dto *UpdateMessageDto) (*model.Message, error) {
 
 	msg := &model.Message{
 		ID:       dto.ID,
@@ -30,7 +30,11 @@ func (umc *UpdateMessageCommand) Exec(ctx context.Context, dto *UpdateMessageDto
 		Payload:  dto.Payload,
 	}
 
-	return umc.msgRepo.Update(ctx, msg)
+	if err := umc.msgRepo.Update(ctx, msg); err != nil {
+		return nil, err
+	}
+
+	return msg, nil
 }
 
 func NewUpdateMessageCommand(msgRepo repository.MessageRepositoryInterface) *UpdateMessageCommand {

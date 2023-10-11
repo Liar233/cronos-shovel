@@ -18,12 +18,16 @@ type CreateDelayCommand struct {
 	delayRepo repository.DelayRepositoryInterface
 }
 
-func (cdc *CreateDelayCommand) Exec(ctx context.Context, dto *CreateDelayDto) error {
+func (cdc *CreateDelayCommand) Exec(ctx context.Context, dto *CreateDelayDto) (*model.Delay, error) {
 
 	delay := model.NewDelay(dto.MessageId)
 	delay.DateTime = dto.Datetime
 
-	return cdc.delayRepo.Create(ctx, delay)
+	if err := cdc.delayRepo.Create(ctx, delay); err != nil {
+		return nil, err
+	}
+
+	return delay, nil
 }
 
 func NewCreateDelayCommand(delayRepo repository.DelayRepositoryInterface) *CreateDelayCommand {

@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,200 +20,200 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	MessageController_GetMessageList_FullMethodName = "/message.MessageController/GetMessageList"
-	MessageController_CreateMessage_FullMethodName  = "/message.MessageController/CreateMessage"
-	MessageController_UpdateMessage_FullMethodName  = "/message.MessageController/UpdateMessage"
-	MessageController_DeleteMessage_FullMethodName  = "/message.MessageController/DeleteMessage"
+	MessageService_GetMessageList_FullMethodName = "/message.MessageService/GetMessageList"
+	MessageService_CreateMessage_FullMethodName  = "/message.MessageService/CreateMessage"
+	MessageService_UpdateMessage_FullMethodName  = "/message.MessageService/UpdateMessage"
+	MessageService_DeleteMessage_FullMethodName  = "/message.MessageService/DeleteMessage"
 )
 
-// MessageControllerClient is the client API for MessageController service.
+// MessageServiceClient is the client API for MessageService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type MessageControllerClient interface {
+type MessageServiceClient interface {
 	GetMessageList(ctx context.Context, in *GetMessageListRequest, opts ...grpc.CallOption) (*GetMessageListResponse, error)
 	CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*CreateMessageResponse, error)
 	UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...grpc.CallOption) (*UpdateMessageResponse, error)
-	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
+	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
-type messageControllerClient struct {
+type messageServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewMessageControllerClient(cc grpc.ClientConnInterface) MessageControllerClient {
-	return &messageControllerClient{cc}
+func NewMessageServiceClient(cc grpc.ClientConnInterface) MessageServiceClient {
+	return &messageServiceClient{cc}
 }
 
-func (c *messageControllerClient) GetMessageList(ctx context.Context, in *GetMessageListRequest, opts ...grpc.CallOption) (*GetMessageListResponse, error) {
+func (c *messageServiceClient) GetMessageList(ctx context.Context, in *GetMessageListRequest, opts ...grpc.CallOption) (*GetMessageListResponse, error) {
 	out := new(GetMessageListResponse)
-	err := c.cc.Invoke(ctx, MessageController_GetMessageList_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, MessageService_GetMessageList_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageControllerClient) CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*CreateMessageResponse, error) {
+func (c *messageServiceClient) CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*CreateMessageResponse, error) {
 	out := new(CreateMessageResponse)
-	err := c.cc.Invoke(ctx, MessageController_CreateMessage_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, MessageService_CreateMessage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageControllerClient) UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...grpc.CallOption) (*UpdateMessageResponse, error) {
+func (c *messageServiceClient) UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...grpc.CallOption) (*UpdateMessageResponse, error) {
 	out := new(UpdateMessageResponse)
-	err := c.cc.Invoke(ctx, MessageController_UpdateMessage_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, MessageService_UpdateMessage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *messageControllerClient) DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error) {
-	out := new(DeleteMessageResponse)
-	err := c.cc.Invoke(ctx, MessageController_DeleteMessage_FullMethodName, in, out, opts...)
+func (c *messageServiceClient) DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, MessageService_DeleteMessage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// MessageControllerServer is the server API for MessageController service.
-// All implementations must embed UnimplementedMessageControllerServer
+// MessageServiceServer is the server API for MessageService service.
+// All implementations must embed UnimplementedMessageServiceServer
 // for forward compatibility
-type MessageControllerServer interface {
+type MessageServiceServer interface {
 	GetMessageList(context.Context, *GetMessageListRequest) (*GetMessageListResponse, error)
 	CreateMessage(context.Context, *CreateMessageRequest) (*CreateMessageResponse, error)
 	UpdateMessage(context.Context, *UpdateMessageRequest) (*UpdateMessageResponse, error)
-	DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error)
-	mustEmbedUnimplementedMessageControllerServer()
+	DeleteMessage(context.Context, *DeleteMessageRequest) (*emptypb.Empty, error)
+	mustEmbedUnimplementedMessageServiceServer()
 }
 
-// UnimplementedMessageControllerServer must be embedded to have forward compatible implementations.
-type UnimplementedMessageControllerServer struct {
+// UnimplementedMessageServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedMessageServiceServer struct {
 }
 
-func (UnimplementedMessageControllerServer) GetMessageList(context.Context, *GetMessageListRequest) (*GetMessageListResponse, error) {
+func (UnimplementedMessageServiceServer) GetMessageList(context.Context, *GetMessageListRequest) (*GetMessageListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMessageList not implemented")
 }
-func (UnimplementedMessageControllerServer) CreateMessage(context.Context, *CreateMessageRequest) (*CreateMessageResponse, error) {
+func (UnimplementedMessageServiceServer) CreateMessage(context.Context, *CreateMessageRequest) (*CreateMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMessage not implemented")
 }
-func (UnimplementedMessageControllerServer) UpdateMessage(context.Context, *UpdateMessageRequest) (*UpdateMessageResponse, error) {
+func (UnimplementedMessageServiceServer) UpdateMessage(context.Context, *UpdateMessageRequest) (*UpdateMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMessage not implemented")
 }
-func (UnimplementedMessageControllerServer) DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error) {
+func (UnimplementedMessageServiceServer) DeleteMessage(context.Context, *DeleteMessageRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMessage not implemented")
 }
-func (UnimplementedMessageControllerServer) mustEmbedUnimplementedMessageControllerServer() {}
+func (UnimplementedMessageServiceServer) mustEmbedUnimplementedMessageServiceServer() {}
 
-// UnsafeMessageControllerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to MessageControllerServer will
+// UnsafeMessageServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to MessageServiceServer will
 // result in compilation errors.
-type UnsafeMessageControllerServer interface {
-	mustEmbedUnimplementedMessageControllerServer()
+type UnsafeMessageServiceServer interface {
+	mustEmbedUnimplementedMessageServiceServer()
 }
 
-func RegisterMessageControllerServer(s grpc.ServiceRegistrar, srv MessageControllerServer) {
-	s.RegisterService(&MessageController_ServiceDesc, srv)
+func RegisterMessageServiceServer(s grpc.ServiceRegistrar, srv MessageServiceServer) {
+	s.RegisterService(&MessageService_ServiceDesc, srv)
 }
 
-func _MessageController_GetMessageList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageService_GetMessageList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMessageListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageControllerServer).GetMessageList(ctx, in)
+		return srv.(MessageServiceServer).GetMessageList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MessageController_GetMessageList_FullMethodName,
+		FullMethod: MessageService_GetMessageList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageControllerServer).GetMessageList(ctx, req.(*GetMessageListRequest))
+		return srv.(MessageServiceServer).GetMessageList(ctx, req.(*GetMessageListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MessageController_CreateMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageService_CreateMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateMessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageControllerServer).CreateMessage(ctx, in)
+		return srv.(MessageServiceServer).CreateMessage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MessageController_CreateMessage_FullMethodName,
+		FullMethod: MessageService_CreateMessage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageControllerServer).CreateMessage(ctx, req.(*CreateMessageRequest))
+		return srv.(MessageServiceServer).CreateMessage(ctx, req.(*CreateMessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MessageController_UpdateMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageService_UpdateMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateMessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageControllerServer).UpdateMessage(ctx, in)
+		return srv.(MessageServiceServer).UpdateMessage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MessageController_UpdateMessage_FullMethodName,
+		FullMethod: MessageService_UpdateMessage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageControllerServer).UpdateMessage(ctx, req.(*UpdateMessageRequest))
+		return srv.(MessageServiceServer).UpdateMessage(ctx, req.(*UpdateMessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MessageController_DeleteMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageService_DeleteMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteMessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageControllerServer).DeleteMessage(ctx, in)
+		return srv.(MessageServiceServer).DeleteMessage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MessageController_DeleteMessage_FullMethodName,
+		FullMethod: MessageService_DeleteMessage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageControllerServer).DeleteMessage(ctx, req.(*DeleteMessageRequest))
+		return srv.(MessageServiceServer).DeleteMessage(ctx, req.(*DeleteMessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// MessageController_ServiceDesc is the grpc.ServiceDesc for MessageController service.
+// MessageService_ServiceDesc is the grpc.ServiceDesc for MessageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var MessageController_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "message.MessageController",
-	HandlerType: (*MessageControllerServer)(nil),
+var MessageService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "message.MessageService",
+	HandlerType: (*MessageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetMessageList",
-			Handler:    _MessageController_GetMessageList_Handler,
+			Handler:    _MessageService_GetMessageList_Handler,
 		},
 		{
 			MethodName: "CreateMessage",
-			Handler:    _MessageController_CreateMessage_Handler,
+			Handler:    _MessageService_CreateMessage_Handler,
 		},
 		{
 			MethodName: "UpdateMessage",
-			Handler:    _MessageController_UpdateMessage_Handler,
+			Handler:    _MessageService_UpdateMessage_Handler,
 		},
 		{
 			MethodName: "DeleteMessage",
-			Handler:    _MessageController_DeleteMessage_Handler,
+			Handler:    _MessageService_DeleteMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

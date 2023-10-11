@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,126 +20,126 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	DelayController_CreateDelay_FullMethodName = "/delay.DelayController/CreateDelay"
-	DelayController_DeleteDelay_FullMethodName = "/delay.DelayController/DeleteDelay"
+	DelayService_CreateDelay_FullMethodName = "/delay.DelayService/CreateDelay"
+	DelayService_DeleteDelay_FullMethodName = "/delay.DelayService/DeleteDelay"
 )
 
-// DelayControllerClient is the client API for DelayController service.
+// DelayServiceClient is the client API for DelayService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type DelayControllerClient interface {
+type DelayServiceClient interface {
 	CreateDelay(ctx context.Context, in *CreateDelayRequest, opts ...grpc.CallOption) (*CreateDelayResponse, error)
-	DeleteDelay(ctx context.Context, in *DeleteDelayRequest, opts ...grpc.CallOption) (*DeleteDelayResponse, error)
+	DeleteDelay(ctx context.Context, in *DeleteDelayRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
-type delayControllerClient struct {
+type delayServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewDelayControllerClient(cc grpc.ClientConnInterface) DelayControllerClient {
-	return &delayControllerClient{cc}
+func NewDelayServiceClient(cc grpc.ClientConnInterface) DelayServiceClient {
+	return &delayServiceClient{cc}
 }
 
-func (c *delayControllerClient) CreateDelay(ctx context.Context, in *CreateDelayRequest, opts ...grpc.CallOption) (*CreateDelayResponse, error) {
+func (c *delayServiceClient) CreateDelay(ctx context.Context, in *CreateDelayRequest, opts ...grpc.CallOption) (*CreateDelayResponse, error) {
 	out := new(CreateDelayResponse)
-	err := c.cc.Invoke(ctx, DelayController_CreateDelay_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, DelayService_CreateDelay_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *delayControllerClient) DeleteDelay(ctx context.Context, in *DeleteDelayRequest, opts ...grpc.CallOption) (*DeleteDelayResponse, error) {
-	out := new(DeleteDelayResponse)
-	err := c.cc.Invoke(ctx, DelayController_DeleteDelay_FullMethodName, in, out, opts...)
+func (c *delayServiceClient) DeleteDelay(ctx context.Context, in *DeleteDelayRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, DelayService_DeleteDelay_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// DelayControllerServer is the server API for DelayController service.
-// All implementations must embed UnimplementedDelayControllerServer
+// DelayServiceServer is the server API for DelayService service.
+// All implementations must embed UnimplementedDelayServiceServer
 // for forward compatibility
-type DelayControllerServer interface {
+type DelayServiceServer interface {
 	CreateDelay(context.Context, *CreateDelayRequest) (*CreateDelayResponse, error)
-	DeleteDelay(context.Context, *DeleteDelayRequest) (*DeleteDelayResponse, error)
-	mustEmbedUnimplementedDelayControllerServer()
+	DeleteDelay(context.Context, *DeleteDelayRequest) (*emptypb.Empty, error)
+	mustEmbedUnimplementedDelayServiceServer()
 }
 
-// UnimplementedDelayControllerServer must be embedded to have forward compatible implementations.
-type UnimplementedDelayControllerServer struct {
+// UnimplementedDelayServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedDelayServiceServer struct {
 }
 
-func (UnimplementedDelayControllerServer) CreateDelay(context.Context, *CreateDelayRequest) (*CreateDelayResponse, error) {
+func (UnimplementedDelayServiceServer) CreateDelay(context.Context, *CreateDelayRequest) (*CreateDelayResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDelay not implemented")
 }
-func (UnimplementedDelayControllerServer) DeleteDelay(context.Context, *DeleteDelayRequest) (*DeleteDelayResponse, error) {
+func (UnimplementedDelayServiceServer) DeleteDelay(context.Context, *DeleteDelayRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDelay not implemented")
 }
-func (UnimplementedDelayControllerServer) mustEmbedUnimplementedDelayControllerServer() {}
+func (UnimplementedDelayServiceServer) mustEmbedUnimplementedDelayServiceServer() {}
 
-// UnsafeDelayControllerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to DelayControllerServer will
+// UnsafeDelayServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DelayServiceServer will
 // result in compilation errors.
-type UnsafeDelayControllerServer interface {
-	mustEmbedUnimplementedDelayControllerServer()
+type UnsafeDelayServiceServer interface {
+	mustEmbedUnimplementedDelayServiceServer()
 }
 
-func RegisterDelayControllerServer(s grpc.ServiceRegistrar, srv DelayControllerServer) {
-	s.RegisterService(&DelayController_ServiceDesc, srv)
+func RegisterDelayServiceServer(s grpc.ServiceRegistrar, srv DelayServiceServer) {
+	s.RegisterService(&DelayService_ServiceDesc, srv)
 }
 
-func _DelayController_CreateDelay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DelayService_CreateDelay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateDelayRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DelayControllerServer).CreateDelay(ctx, in)
+		return srv.(DelayServiceServer).CreateDelay(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DelayController_CreateDelay_FullMethodName,
+		FullMethod: DelayService_CreateDelay_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DelayControllerServer).CreateDelay(ctx, req.(*CreateDelayRequest))
+		return srv.(DelayServiceServer).CreateDelay(ctx, req.(*CreateDelayRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DelayController_DeleteDelay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DelayService_DeleteDelay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteDelayRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DelayControllerServer).DeleteDelay(ctx, in)
+		return srv.(DelayServiceServer).DeleteDelay(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DelayController_DeleteDelay_FullMethodName,
+		FullMethod: DelayService_DeleteDelay_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DelayControllerServer).DeleteDelay(ctx, req.(*DeleteDelayRequest))
+		return srv.(DelayServiceServer).DeleteDelay(ctx, req.(*DeleteDelayRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// DelayController_ServiceDesc is the grpc.ServiceDesc for DelayController service.
+// DelayService_ServiceDesc is the grpc.ServiceDesc for DelayService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var DelayController_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "delay.DelayController",
-	HandlerType: (*DelayControllerServer)(nil),
+var DelayService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "delay.DelayService",
+	HandlerType: (*DelayServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateDelay",
-			Handler:    _DelayController_CreateDelay_Handler,
+			Handler:    _DelayService_CreateDelay_Handler,
 		},
 		{
 			MethodName: "DeleteDelay",
-			Handler:    _DelayController_DeleteDelay_Handler,
+			Handler:    _DelayService_DeleteDelay_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

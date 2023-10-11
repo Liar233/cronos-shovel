@@ -25,8 +25,8 @@ type GracefulServer interface {
 // Создание gRPC сервера
 func NewGRPCServer(
 	config *GRPCConfig,
-	msgController pb.MessageControllerServer,
-	delayController pb.DelayControllerServer,
+	msgController pb.MessageServiceServer,
+	delayController pb.DelayServiceServer,
 ) (GracefulServer, error) {
 
 	addr := fmt.Sprintf("%s:%d", config.Host, config.Port)
@@ -38,8 +38,8 @@ func NewGRPCServer(
 	}
 
 	server := grpc.NewServer()
-	pb.RegisterMessageControllerServer(server, msgController)
-	pb.RegisterDelayControllerServer(server, delayController)
+	pb.RegisterMessageServiceServer(server, msgController)
+	pb.RegisterDelayServiceServer(server, delayController)
 
 	if err = server.Serve(listener); err != nil {
 		return nil, err

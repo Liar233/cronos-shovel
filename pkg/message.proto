@@ -4,11 +4,13 @@ option go_package = "github.com/Liar233/cronos-shovel/pkg";
 
 package message;
 
-service MessageController{
+import "google/protobuf/empty.proto";
+
+service MessageService{
   rpc GetMessageList(GetMessageListRequest) returns (GetMessageListResponse) {}
   rpc CreateMessage(CreateMessageRequest) returns (CreateMessageResponse) {}
   rpc UpdateMessage(UpdateMessageRequest) returns (UpdateMessageResponse) {}
-  rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse) {}
+  rpc DeleteMessage(DeleteMessageRequest) returns (google.protobuf.Empty) {}
 }
 
 message DelayObject {
@@ -28,8 +30,7 @@ message MessageObject {
 message GetMessageListRequest {}
 
 message GetMessageListResponse {
-  string error = 1;
-  repeated MessageObject messages = 2;
+  repeated MessageObject messages = 1;
 }
 
 message CreateMessageRequest {
@@ -40,12 +41,11 @@ message CreateMessageRequest {
 }
 
 message CreateMessageResponse {
-  string error = 1;
-  string id = 2;
-  string mask = 3;
-  string title = 4;
-  repeated string channels = 5;
-  bytes payload = 6;
+  string id = 1;
+  string mask = 2;
+  string title = 3;
+  repeated string channels = 4;
+  bytes payload = 5;
 }
 
 message UpdateMessageRequest {
@@ -57,18 +57,13 @@ message UpdateMessageRequest {
 }
 
 message UpdateMessageResponse {
-  string error = 1;
-  string id = 2;
-  string mask = 3;
-  string title = 4;
-  repeated string channels = 5;
-  bytes payload = 6;
+  string id = 1;
+  string mask = 2;
+  string title = 3;
+  repeated string channels = 4;
+  bytes payload = 5;
 }
 
 message DeleteMessageRequest{
   string id = 1;
-}
-
-message DeleteMessageResponse{
-  string error = 1;
 }

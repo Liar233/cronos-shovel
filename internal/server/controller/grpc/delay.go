@@ -2,82 +2,83 @@ package grpc
 
 import (
 	"context"
-	"time"
 
 	pb "github.com/Liar233/cronos-shovel/internal/pkg"
-	"github.com/Liar233/cronos-shovel/internal/server/model"
-	"github.com/Liar233/cronos-shovel/internal/server/storage/repository"
+	"github.com/Liar233/cronos-shovel/internal/server/command/delay"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type DelayController struct {
-	pb.UnimplementedDelayControllerServer
-	logger    logrus.FieldLogger
-	delayRepo repository.DelayRepositoryInterface
+	pb.UnimplementedDelayServiceServer
+	logger         logrus.FieldLogger
+	createDelayCmd *delay.CreateDelayCommand
+	deleteDelayCmd *delay.DeleteDelayCommand
 }
 
 func NewDelayController(
 	logger logrus.FieldLogger,
-	delayRepo repository.DelayRepositoryInterface,
+	createDelayCmd *delay.CreateDelayCommand,
+	deleteDelayCmd *delay.DeleteDelayCommand,
 ) *DelayController {
 
 	return &DelayController{
-		logger:    logger,
-		delayRepo: delayRepo,
+		logger:         logger,
+		createDelayCmd: createDelayCmd,
+		deleteDelayCmd: deleteDelayCmd,
 	}
 }
 
 func (dc *DelayController) CreateDelay(ctx context.Context, req *pb.CreateDelayRequest) (*pb.CreateDelayResponse, error) {
 
-	resp := &pb.CreateDelayResponse{}
-
-	messageId, err := uuid.Parse(req.MessageId)
+	msgId, err := uuid.Parse(req.MessageId)
 
 	if err != nil {
-		resp.Error = err.Error()
-		dc.logger.Error("Invalid delay message_id: %s", err.Error())
-
-		return resp, err
+		return nil, err
 	}
 
-	delay := model.NewDelay(messageId)
-	delay.DateTime = time.Unix(req.DateTime, 0)
-
-	if err = dc.delayRepo.Create(ctx, delay); err != nil {
-		resp.Error = err.Error()
-		dc.logger.Error("Create delay error: %s", err.Error())
-
-		return resp, err
+	dto := &delay.CreateDelayDto{
+		MessageId: msgId,
+		Datetime:  req.DateTime.AsTime(),
 	}
 
-	resp.Id = delay.ID.String()
-	resp.MessageId = delay.MessageID.String()
-	resp.DateTime = delay.DateTime.Unix()
+	delay, err := dc.createDelayCmd.Exec(ctx, dto)
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	ts := &timestamppb.Timestamp{
+		Seconds: delay.DateTime.Unix(),
+		Nanos:   0,
+	}
+
+	resp := &pb.CreateDelayResponse{
+		Id:        delay.ID.String(),
+		MessageId: delay.MessageID.String(),
+		DateTime:  ts,
+	}
 
 	return resp, nil
 }
 
-func (dc *DelayController) DeleteDelay(ctx context.Context, req *pb.DeleteDelayRequest) (*pb.DeleteDelayResponse, error) {
-
-	resp := &pb.DeleteDelayResponse{}
+func (dc *DelayController) DeleteDelay(ctx context.Context, req *pb.DeleteDelayRequest) (*emptypb.Empty, error) {
 
 	id, err := uuid.Parse(req.Id)
 
 	if err != nil {
-		resp.Error = err.Error()
-		dc.logger.Error("Invalid delay id: %s", err.Error())
-
-		return resp, err
+		return nil, status.Error(codes.InvalidArgument, "invalid delay id")
 	}
 
-	if err = dc.delayRepo.Delete(ctx, id); err != nil {
+	dto := &delay.DeleteDelayDto{ID: id}
 
-		resp.Error = err.Error()
-		dc.logger.Error("Delete delay error: %s", err.Error())
-
-		return resp, err
+	if err = dc.deleteDelayCmd.Exec(ctx, dto); err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return resp, nil
+	return &emptypb.Empty{}, nil
 }

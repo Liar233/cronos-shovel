@@ -5,20 +5,22 @@ import (
 	"os/signal"
 	"syscall"
 
-	grpc2 "github.com/Liar233/cronos-shovel/internal/server/controller/grpc"
+	"github.com/Liar233/cronos-shovel/internal/server/command/delay"
+	"github.com/Liar233/cronos-shovel/internal/server/command/message"
+	"github.com/Liar233/cronos-shovel/internal/server/controller/grpc"
 	"github.com/Liar233/cronos-shovel/internal/server/storage"
 	"github.com/Liar233/cronos-shovel/internal/server/storage/repository"
 	"github.com/sirupsen/logrus"
 )
 
 type CronosServerConfig struct {
-	GRPC    grpc2.GRPCConfig              `yaml:"grpc"`
+	GRPC    grpc.GRPCConfig               `yaml:"grpc"`
 	Storage storage.PostgresStorageConfig `yaml:"storage"`
 }
 
 type CronoServer struct {
 	config     *CronosServerConfig
-	grpcServer grpc2.GracefulServer
+	grpcServer grpc.GracefulServer
 	logger     logrus.FieldLogger
 	msgRepo    repository.MessageRepositoryInterface
 	delayRepo  repository.DelayRepositoryInterface
@@ -85,12 +87,32 @@ func (cs *CronoServer) BootstrapChannels() error {
 }
 
 func (cs *CronoServer) BootstrapGRPCServer() error {
+
+	createMsgCmd := message.NewCreateMessageCommand(cs.msgRepo)
+	updateMsgCmd := message.NewUpdateMessageCommand(cs.msgRepo)
+	deleteMsgCmd := message.NewDeleteMessageCommand(cs.msgRepo)
+	getMsgListCmd := message.NewGetMessageCommand(cs.msgRepo)
+
+	msgController := grpc.NewMessageController(
+		cs.logger,
+		createMsgCmd,
+		updateMsgCmd,
+		deleteMsgCmd,
+		getMsgListCmd,
+	)
+
+	createDelayCmd := delay.NewCreateDelayCommand(cs.delayRepo)
+	deleteDelayCmd := delay.NewDeleteDelayCommand(cs.delayRepo)
+
+	delayController := grpc.NewDelayController(
+		cs.logger,
+		createDelayCmd,
+		deleteDelayCmd,
+	)
+
 	var err error
 
-	msgController := grpc2.NewMessageController(cs.logger, cs.msgRepo)
-	delayController := grpc2.NewDelayController(cs.logger, cs.delayRepo)
-
-	cs.grpcServer, err = grpc2.NewGRPCServer(
+	cs.grpcServer, err = grpc.NewGRPCServer(
 		&cs.config.GRPC,
 		msgController,
 		delayController,
