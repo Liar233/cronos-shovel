@@ -4,9 +4,11 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/Liar233/cronos-shovel/internal/server/command/delay"
 	"github.com/Liar233/cronos-shovel/internal/server/command/message"
+	"github.com/Liar233/cronos-shovel/internal/server/controller/channel"
 	"github.com/Liar233/cronos-shovel/internal/server/controller/grpc"
 	"github.com/Liar233/cronos-shovel/internal/server/storage"
 	"github.com/Liar233/cronos-shovel/internal/server/storage/repository"
@@ -14,8 +16,10 @@ import (
 )
 
 type CronosServerConfig struct {
-	GRPC    grpc.GRPCConfig               `yaml:"grpc"`
-	Storage storage.PostgresStorageConfig `yaml:"storage"`
+	FreezeTimeout time.Duration                         `yaml:"freeze_timeout"`
+	GRPC          grpc.GRPCConfig                       `yaml:"grpc"`
+	Storage       storage.PostgresStorageConfig         `yaml:"storage"`
+	Channels      map[string]channel.KafkaChannelConfig `yaml:"channels"`
 }
 
 type CronoServer struct {
@@ -25,6 +29,7 @@ type CronoServer struct {
 	msgRepo    repository.MessageRepositoryInterface
 	delayRepo  repository.DelayRepositoryInterface
 	storage    storage.ConnectorInterface
+	channels   map[string]channel.ChannelInterface // read only map!
 }
 
 func NewCronoServer(config *CronosServerConfig) *CronoServer {
@@ -82,6 +87,12 @@ func (cs *CronoServer) BootstrapStorage() error {
 }
 
 func (cs *CronoServer) BootstrapChannels() error {
+
+	cs.channels = make(map[string]channel.ChannelInterface, len(cs.config.Channels))
+
+	for key, conf := range cs.config.Channels {
+		cs.channels[key] = channel.NewKafkaChannel(conf)
+	}
 
 	return nil
 }
