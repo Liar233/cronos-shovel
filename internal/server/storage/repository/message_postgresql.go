@@ -81,7 +81,7 @@ func (mpr *MessagePostgresqlRepository) FindOne(ctx context.Context, id uuid.UUI
 	_, err := mpr.dialect.
 		From("messages").
 		LeftJoin(
-			goqu.T("dalays"),
+			goqu.T("delays"),
 			goqu.On(
 				goqu.Ex{"messages.id": goqu.I("delays.message_id")},
 			),
