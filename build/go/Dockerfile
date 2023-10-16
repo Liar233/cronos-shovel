@@ -4,6 +4,14 @@ WORKDIR /app
 
 COPY . .
 
+RUN apt-get update && apt-get install -y protobuf-compiler \
+    && go get google.golang.org/protobuf/cmd/protoc-gen-go \
+    && go install google.golang.org/protobuf/cmd/protoc-gen-go \
+    && go get google.golang.org/grpc/cmd/protoc-gen-go-grpc \
+    && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc \
+    && export PATH="$PATH:$(go env GOPATH)/bin" \
+ && rm -rf /var/lib/apt/lists/*
+
 RUN go mod download \
     && go mod verify \
     && CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /output/server /app/cmd/server/ \

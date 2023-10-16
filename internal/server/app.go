@@ -5,14 +5,26 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Liar233/cronos-shovel/internal/server/grpc"
+	"github.com/Liar233/cronos-shovel/internal/server/command/delay"
+	"github.com/Liar233/cronos-shovel/internal/server/command/message"
+	"github.com/Liar233/cronos-shovel/internal/server/controller/grpc"
+	"github.com/Liar233/cronos-shovel/internal/server/storage"
+	"github.com/Liar233/cronos-shovel/internal/server/storage/repository"
 	"github.com/sirupsen/logrus"
 )
+
+type CronosServerConfig struct {
+	GRPC    grpc.GRPCConfig               `yaml:"grpc"`
+	Storage storage.PostgresStorageConfig `yaml:"storage"`
+}
 
 type CronoServer struct {
 	config     *CronosServerConfig
 	grpcServer grpc.GracefulServer
 	logger     logrus.FieldLogger
+	msgRepo    repository.MessageRepositoryInterface
+	delayRepo  repository.DelayRepositoryInterface
+	storage    storage.ConnectorInterface
 }
 
 func NewCronoServer(config *CronosServerConfig) *CronoServer {
@@ -57,6 +69,15 @@ func (cs *CronoServer) Run() {
 
 func (cs *CronoServer) BootstrapStorage() error {
 
+	cs.storage = storage.NewPostgresStorage(&cs.config.Storage)
+
+	if err := cs.storage.Connect(); err != nil {
+		return err
+	}
+
+	cs.msgRepo = repository.NewMessagePostgresqlRepository(cs.storage)
+	cs.delayRepo = repository.NewDelayPostgresqlRepository(cs.storage)
+
 	return nil
 }
 
@@ -66,11 +87,36 @@ func (cs *CronoServer) BootstrapChannels() error {
 }
 
 func (cs *CronoServer) BootstrapGRPCServer() error {
+
+	createMsgCmd := message.NewCreateMessageCommand(cs.msgRepo)
+	updateMsgCmd := message.NewUpdateMessageCommand(cs.msgRepo)
+	deleteMsgCmd := message.NewDeleteMessageCommand(cs.msgRepo)
+	getMsgListCmd := message.NewGetMessageCommand(cs.msgRepo)
+
+	msgController := grpc.NewMessageController(
+		cs.logger,
+		createMsgCmd,
+		updateMsgCmd,
+		deleteMsgCmd,
+		getMsgListCmd,
+	)
+
+	createDelayCmd := delay.NewCreateDelayCommand(cs.delayRepo)
+	deleteDelayCmd := delay.NewDeleteDelayCommand(cs.delayRepo)
+
+	delayController := grpc.NewDelayController(
+		cs.logger,
+		createDelayCmd,
+		deleteDelayCmd,
+	)
+
 	var err error
 
-	controller := grpc.NewTikTackController(cs.logger)
-
-	cs.grpcServer, err = grpc.NewGRPCServer(&cs.config.GRPC, controller)
+	cs.grpcServer, err = grpc.NewGRPCServer(
+		&cs.config.GRPC,
+		msgController,
+		delayController,
+	)
 
 	return err
 }
@@ -106,8 +152,4 @@ func (cs *CronoServer) BootstrapLogger() error {
 	cs.logger = logger
 
 	return nil
-}
-
-type CronosServerConfig struct {
-	GRPC grpc.GRPCConfig `yaml:"grpc"`
 }

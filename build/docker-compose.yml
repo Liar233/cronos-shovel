@@ -12,6 +12,23 @@ services:
     build:
       context: ../
       dockerfile: ./build/go/Dockerfile
+    volumes:
+      - ../:/app
     networks:
       - cronos-shovel-network
       - global-network
+
+  cronos-shovel-postgresql:
+    image: postgres:15.3
+    container_name: cronos-shovel-postgresql
+    restart: always
+    environment:
+      POSTGRES_USER: "cronos"
+      POSTGRES_PASSWORD: "secret"
+      POSTGRES_DB: "cronos_db"
+    volumes:
+      - ./postgresql/rules.sql:/docker-entrypoint-initdb.d/rules.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - cronos-shovel-network
