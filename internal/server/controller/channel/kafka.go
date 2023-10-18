@@ -34,7 +34,7 @@ func NewKafkaChannel(config KafkaChannelConfig) ChannelInterface {
 	}
 }
 
-func (kc KafkaChannel) Fire(messages []*model.Message) error {
+func (kc KafkaChannel) Fire(ctx context.Context, messages []*model.Message) error {
 
 	bulk := make([]kafka.Message, len(messages))
 
@@ -47,8 +47,6 @@ func (kc KafkaChannel) Fire(messages []*model.Message) error {
 			Value:     msg.Payload,
 		}
 	}
-
-	ctx := context.Background()
 
 	return kc.writer.WriteMessages(ctx, bulk...)
 }
