@@ -1,3 +1,4 @@
+freeze_timeout: 1m
 grpc:
   host: 0.0.0.0
   port: 8080
@@ -7,4 +8,16 @@ storage:
   database: cronos_db
   user: cronos
   password: secret
-
+channels:
+  channel1:
+    brokers: [ "localhost:9092", "localhost:9093", "localhost:9094" ]
+    topic: "topic-channel-1"
+    partition: 0
+  channel2:
+    brokers: [ "localhost:9092", "localhost:9093", "localhost:9094" ]
+    topic: "topic-channel-2"
+    partition: 0
+  channel3:
+    brokers: [ "localhost:9092", "localhost:9093", "localhost:9094" ]
+    topic: "topic-channel-3"
+    partition: 0
