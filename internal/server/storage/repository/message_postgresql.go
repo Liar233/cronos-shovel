@@ -24,7 +24,7 @@ func NewMessagePostgresqlRepository(provider storage.ConnectorInterface) *Messag
 }
 
 func (mpr *MessagePostgresqlRepository) GetList(ctx context.Context) ([]*model.Message, error) {
-	var users []*model.Message
+	var messages []*model.Message
 
 	err := mpr.dialect.
 		From("messages").
@@ -34,13 +34,13 @@ func (mpr *MessagePostgresqlRepository) GetList(ctx context.Context) ([]*model.M
 				goqu.Ex{"messages.id": goqu.I("delays.message_id")},
 			),
 		).
-		ScanStructsContext(ctx, users)
+		ScanStructsContext(ctx, messages)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return users, nil
+	return messages, nil
 }
 
 func (mpr *MessagePostgresqlRepository) Create(ctx context.Context, msg *model.Message) error {

@@ -1,0 +1,13 @@
+with-expecter: true
+dir: "{{.InterfaceDir}}/mocks"
+packages:
+  github.com/Liar233/cronos-shovel/internal/server/storage/repository:
+    config:
+      all: True
+    interfaces:
+      MessageRepositoryInterface:
+        config:
+          mockname: MessageMockRepository
+      DelayRepositoryInterface:
+        config:
+          mockname: DelayMockRepository
