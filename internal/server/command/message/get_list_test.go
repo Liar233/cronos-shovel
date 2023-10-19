@@ -2,7 +2,6 @@ package message
 
 import (
 	"context"
-	"reflect"
 	"testing"
 
 	"github.com/Liar233/cronos-shovel/internal/server/model"
@@ -19,11 +18,11 @@ func TestGetMessagesListCommand_Exec(t *testing.T) {
 		Return(make([]*model.Message, 0), nil)
 
 	getListCmd := NewGetMessageCommand(mockMessageRepository)
-	messages, err := getListCmd.Exec(ctx)
+	_, err := getListCmd.Exec(ctx)
 
 	if err != nil {
 		t.Fatalf("fail creget message list with: %s", err.Error())
 	}
 
-	println(reflect.TypeOf(messages))
+	// ToDo: validate command result
 }
