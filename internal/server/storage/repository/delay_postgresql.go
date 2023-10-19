@@ -22,11 +22,23 @@ func NewDelayPostgresqlRepository(provider storage.ConnectorInterface) *DelayPos
 }
 
 func (dpr *DelayPostgresqlRepository) Create(ctx context.Context, delay *model.Delay) error {
-	//TODO implement me
-	panic("implement me")
+	_, err := dpr.dialect.
+		Insert("delays").
+		Rows(delay).
+		Executor().
+		ExecContext(ctx)
+
+	return err
 }
 
 func (dpr *DelayPostgresqlRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	//TODO implement me
-	panic("implement me")
+	_, err := dpr.dialect.
+		Delete("delays").
+		Where(
+			goqu.C("id").Eq(id),
+		).
+		Executor().
+		ExecContext(ctx)
+
+	return err
 }
